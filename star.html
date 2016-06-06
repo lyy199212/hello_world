@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html><head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>Particle Web</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+<canvas height="620" width="1360" id="canvas" style="position: absolute; height: 100%;"></canvas>
+
+
+<script>
+    (function () {
+        var canvasEl = document.getElementById('canvas');
+        var ctx = canvasEl.getContext('2d');
+        var mousePos = [0, 0];//鼠标坐标
+
+        var easingFactor = 5.0;
+        var backgroundColor = '#000';
+        var nodeColor = '#fff';
+        var edgeColor = '#fff';
+
+        var nodes = [];//存储星星
+        var edges = [];//存储边
+
+        function constructNodes() {
+            for (var i = 0; i < 100; i++) {
+                var node = {
+                    drivenByMouse: i == 0,
+                    //星星位置随机
+                    x: Math.random() * canvasEl.width,
+                    y: Math.random() * canvasEl.height,
+                    //移动的变量，随机的
+                    vx: Math.random() * 1 - 0.5,
+                    vy: Math.random() * 1 - 0.5,
+                    radius: Math.random() > 0.9 ? 3 + Math.random() * 3 : 1 + Math.random() * 3
+                };
+
+                nodes.push(node);
+            }
+
+            nodes.forEach(function (e) {
+                nodes.forEach(function (e2) {
+                    //如果不是自己本身，返回；否则，连线
+                    if (e == e2) {
+                        return;
+                    }
+
+                    var edge = {
+                        from: e,
+                        to: e2
+                    }
+
+                    addEdge(edge);
+                });
+            });
+        }
+
+        function addEdge(edge) {
+            //任意两点间有两条线，A到B和B到A，ignore的存在就是保证只生成一条，并且把这条计入到数组中。
+            var ignore = false;
+
+            edges.forEach(function (e) {
+                if (e.from == edge.from && e.to == edge.to) {
+                    ignore = true;
+                }
+
+                if (e.to == edge.from && e.from == edge.to) {
+                    ignore = true;
+                }
+            });
+
+            if (!ignore) {
+                edges.push(edge);
+            }
+        }
+
+        function step() {
+            nodes.forEach(function (e) {
+                if (e.drivenByMouse) {
+                    return;
+                }
+
+                e.x += e.vx;
+                e.y += e.vy;
+                //到边界时候的处理
+                function clamp(min, max, value) {
+                    if (value > max) {
+                        return max;
+                    } else if (value < min) {
+                        return min;
+                    } else {
+                        return value;
+                    }
+                }
+
+                if (e.x <= 0 || e.x >= canvasEl.width) {
+                    e.vx *= -1;
+                    e.x = clamp(0, canvasEl.width, e.x)
+                }
+
+                if (e.y <= 0 || e.y >= canvasEl.height) {
+                    e.vy *= -1;
+                    e.y = clamp(0, canvasEl.height, e.y)
+                }
+            });
+
+            adjustNodeDrivenByMouse();
+            render();
+            window.requestAnimationFrame(step);
+        }
+
+        function adjustNodeDrivenByMouse() {
+           // factor 是缓动因子，t 是最终位置，x 是当前位置。至于这个公式的解释还有个交互大神 Bret Victor 在他的演讲中提到过，视频做的非常好，有条(ti)件(zi)大家一定要看看： Bret Victor – Stop Drawing Dead Fish
+            nodes[0].x += (mousePos[0] - nodes[0].x) / easingFactor;
+            nodes[0].y += (mousePos[1] - nodes[0].y) / easingFactor;
+        }
+
+        function lengthOfEdge(edge) {
+            return Math.sqrt(Math.pow((edge.from.x - edge.to.x), 2) + Math.pow((edge.from.y - edge.to.y), 2));
+        }
+
+        function render() {
+            ctx.fillStyle = backgroundColor;
+            ctx.fillRect(0, 0, canvasEl.width, canvasEl.height);
+
+            edges.forEach(function (e) {
+                var l = lengthOfEdge(e);
+                var threshold = canvasEl.width / 8;
+                 //如果变得长大于画布宽的八分之一，就不显示边。
+                if (l > threshold) {
+                    return;
+                }
+
+                ctx.strokeStyle = edgeColor;
+                ctx.lineWidth = (1.0 - l / threshold) * 2.5;
+                ctx.globalAlpha = 1.0 - l / threshold;
+                ctx.beginPath();
+                ctx.moveTo(e.from.x, e.from.y);
+                ctx.lineTo(e.to.x, e.to.y);
+                ctx.stroke();
+            });
+            ctx.globalAlpha = 1.0;
+
+            nodes.forEach(function (e) {
+                if (e.drivenByMouse) {
+                    return;
+                }
+
+                ctx.fillStyle = nodeColor;
+                ctx.beginPath();
+                ctx.arc(e.x, e.y, e.radius, 0, 2 * Math.PI);
+                ctx.fill();
+            });
+        }
+
+        window.onresize = function () {
+            canvasEl.width = document.body.clientWidth;
+            canvasEl.height = canvasEl.clientHeight;
+
+            if (nodes.length == 0) {
+                constructNodes();
+            }
+
+            render();
+        };
+
+        window.onmousemove = function (e) {
+            mousePos[0] = e.clientX;
+            mousePos[1] = e.clientY;
+        }
+
+        window.onresize(); // trigger the event manually.
+        window.requestAnimationFrame(step);
+    }).call(this);
+</script>
+
+</body>
+</html>
