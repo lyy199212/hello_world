@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>刮刮乐canvas</title>
+</head>
+<style>
+    body,html{
+        margin: 0;
+        padding: 0;
+    }
+    .box{
+        width: 400px;
+        height: 400px;
+        margin: 100px auto;
+        background: red;
+        position: relative;
+    }
+    .box p{
+        font: 80px/400px "microsoft yahei";
+        color: #fff;
+        text-align: center;
+    }
+    #canvas{
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+</style>
+
+<body>
+<div class="box">
+   <p>
+       谢谢参与
+   </p>
+    <canvas height="400" width="400" id="canvas"></canvas>
+</div>
+<script>
+   var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext("2d");
+   ctx.fillStyle = "#666";
+    ctx.fillRect(0,0,400,400);
+
+     canvas.onmousemove = function(e){
+         var _x = e.screenX, _y = e.screenY;
+         ctx.clearRect(_x,_y,20,20);
+     };
+</script>
+</body>
+</html>
