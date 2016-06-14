@@ -40,11 +40,30 @@
     var ctx = canvas.getContext("2d");
    ctx.fillStyle = "#666";
     ctx.fillRect(0,0,400,400);
+   ctx.globalCompositeOperation="destination-out";
 
      canvas.onmousemove = function(e){
-         var _x = e.screenX, _y = e.screenY;
+         ctx.beginPath();
+         ctx.fillStyle = "#f00";
+         var _x = e.offsetX, _y = e.offsetY;
          ctx.clearRect(_x,_y,20,20);
+         ctx.arc(_x,_y,20,0,360);
+         ctx.fill();
+         ctx.closePath();
+
+         var num = 0;
+         var datas = ctx.getImageData(0,0,400,400);
+         for (var i = 0; i < datas.data.length; i++) {
+             if (datas.data[i] == 0) {
+                 num++;
+             };
+         };
+         if (num >= datas.data.length * 0.5) {
+             ctx.fillRect(0,0,400,400);
+         }
      };
+
+
 </script>
 </body>
 </html>
