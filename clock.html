@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>canvas 钟表</title>
+</head>
+<style>
+    #canvas{
+        margin: 50px auto;
+        background: #999;
+    }
+</style>
+<body>
+<canvas id="canvas" width="300" height="300"></canvas>
+</body>
+<script>
+    var can = document.getElementById("canvas");
+    var ctx = can.getContext("2d");
+    var RADIUS = 150;
+    var HAND_TRUNCATION = can.width/10;
+
+    function drawCircle(){
+        ctx.beginPath();
+        ctx.arc(150,150,100,0,2*Math.PI,false);
+        ctx.beginPath();
+        ctx.arc(150,150,90,0,2*Math.PI,false);
+        ctx.stroke();
+    }
+
+    function drawNumbers(){
+        var num = [1,2,3,4,5,6,7,8,9,10,11,12];
+        var angel = 0;
+        var textWid = 0;
+
+        num.forEach(function(i){
+            angel = Math.PI / 6 * (i - 3);
+            textWid = ctx.measureText(i).width;
+            ctx.fillText(i, 150 + 100 * Math.cos(angel) - textWid / 2,150 + 100 * Math.sin(angel) + 4);
+
+        })
+    }
+    function drawCenter(){
+        ctx.beginPath();
+        ctx.arc(150,150,4,0,2*Math.PI,false);
+        ctx.fill();
+    }
+
+    function drawLine(num,isHour,long){
+        var angel = Math.PI　* 2 * (num/60) -　Math.PI/2;
+        var handRadius = isHour ? 150 - HAND_TRUNCATION - 20 : 150 - HAND_TRUNCATION;
+
+       ctx.moveTo(can.width/2,can.height/2);
+        ctx.lineTo(150 + handRadius *long * Math.cos(angel),150 + long* handRadius * Math.sin(angel));
+        ctx.stroke();
+    }
+
+    function drawHand(){
+        var date = new Date();
+        var hour = (date.getHours() > 12) ? date.getHours() - 12 : date.getHours();
+
+        drawLine(hour * 5 + (date.getMinutes()/60) * 5,true,0.4);
+        drawLine(date.getMinutes(),false,0.5);
+        drawLine(date.getSeconds(),false,0.6);
+
+
+    }
+
+
+    setInterval(function(){
+        ctx.clearRect(0,0,can.width,can.height);
+        drawCircle();
+        drawNumbers();
+        drawCenter();
+        drawHand();
+    },1000);
+</script>
+</html>
