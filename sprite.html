@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Sprite sheets</title>
+
+    <style>
+        body {
+            background: #dddddd;
+        }
+
+        #canvas {
+            position: absolute;
+            left: 0px;
+            top: 20px;
+            margin: 20px;
+            background: #ffffff;
+            border: thin inset rgba(100, 150, 230, 0.5);
+            cursor: pointer;
+        }
+
+        #readout {
+            margin-top: 10px;
+            margin-left: 15px;
+            color: blue;
+        }
+    </style>
+</head>
+<body>
+<div id='readout'></div>
+
+<canvas id='canvas' width='500' height='250'>
+    Canvas not supported
+</canvas>
+<script>
+    var CAN = document.getElementById("canvas");
+    var OUT = document.getElementById("readout");
+    var ctx = CAN.getContext("2d");
+    var SPRITE = new Image();
+    var HEIGHT = CAN.height;
+    var WIDTH = CAN.width;
+
+    function drawImg() {
+        ctx.drawImage(SPRITE, 0, 0);
+    }
+
+    function Horizontal() {//水平的网格线
+        for (var i = 0; i <= HEIGHT; i += 10) {
+            ctx.beginPath();
+            ctx.moveTo(0, i + 0.5);
+            ctx.lineTo(WIDTH, i + 0.5);
+            ctx.strokeStyle = "#999";
+            ctx.stroke();
+        }
+    }
+
+    function Vertical() {//竖直的网格线
+        for (var i = 0; i <= WIDTH; i += 10) {
+            ctx.beginPath();
+            ctx.moveTo(i + 0.5, 0);
+            ctx.lineTo(i + 0.5, HEIGHT);
+            ctx.strokeStyle = "#999";
+            ctx.stroke();
+        }
+    }
+
+
+
+    function HorizontalChange(y) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(WIDTH, y);
+        ctx.strokeStyle = "blue";
+        ctx.stroke();
+    }
+
+    function VerticalChange(x) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, HEIGHT);
+        ctx.strokeStyle = "blue";
+        ctx.stroke();
+    }
+
+    function xy(x, y) {
+        HorizontalChange(y);
+        VerticalChange(x);
+    }
+
+    function windowToCanvas(canvas, x, y) {
+        var bbox = canvas.getBoundingClientRect();
+
+        return { x: x - bbox.left * (WIDTH / bbox.width),
+            y: y - bbox.top  * (HEIGHT / bbox.height)
+        };
+
+    }
+
+    function write(x,y){
+        OUT.innerHTML = '(' + x.toFixed(0) + ', ' + y.toFixed(0) + ')';
+    }
+
+    CAN.onmousemove = function (e) {
+        ctx.clearRect(0,0,WIDTH,HEIGHT);
+        var loc = windowToCanvas(CAN, e.clientX, e.clientY);
+        Horizontal();
+        Vertical();
+        drawImg();
+        xy(loc.x, loc.y);
+        write(loc.x, loc.y);
+    };
+    //初始化
+    SPRITE.src = "images/running-sprite-sheet.png";
+    SPRITE.onload = function () {
+        drawImg();
+    };
+    Horizontal();
+    Vertical();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>剪纸效果</title>
+</head>
+<style>
+    body {
+        background: #dddddd;
+    }
+
+    #canvas {
+        margin-left: 10px;
+        margin-top: 10px;
+        background: #ffffff;
+        border: thin solid #aaaaaa;
+    }
+
+    #glasspane {
+        position: absolute;
+        left: 50px;
+        top: 50px;
+        padding: 0px 20px 10px 10px;
+        background: rgba(0, 0, 0, 0.3);
+        border: thin solid rgba(0, 0, 0, 0.6);
+        color: #eeeeee;
+        font-family: Droid Sans, Arial, Helvetica, sans-serif;
+        font-size: 12px;
+        cursor: pointer;
+        -webkit-box-shadow: rgba(0, 0, 0, 0.5) 5px 5px 20px;
+        -moz-box-shadow: rgba(0, 0, 0, 0.5) 5px 5px 20px;
+        box-shadow: rgba(0, 0, 0, 0.5) 5px 5px 20px;
+    }
+
+    #glasspane h2 {
+        font-weight: normal;
+    }
+
+    #glasspane .title {
+        font-size: 2em;
+        color: rgba(255, 255, 0, 0.8);
+    }
+
+    #glasspane a:hover {
+        color: yellow;
+    }
+
+    #glasspane a {
+        text-decoration: none;
+        color: #cccccc;
+        font-size: 3.5em;
+    }
+
+    #glasspane p {
+        margin: 10px;
+        color: rgba(65, 65, 220, 1.0);
+        font-size: 12pt;
+        font-family: Palatino, Arial, Helvetica, sans-serif;
+    }
+</style>
+<body>
+<canvas id='canvas' width='750' height='600'>
+    Canvas not supported
+</canvas>
+
+<script>
+    var can = document.getElementById("canvas");
+    var ctx = can.getContext("2d");
+
+    function drawGrid(){
+        ctx.save();
+        ctx.strokeStyle = "#999";
+        ctx.lineWidth = 0.5;
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(0,0,can.width,can.height);
+        //..................................
+        for(var i = 0;i <= can.width; i+=10){//竖线
+              ctx.beginPath();
+            ctx.moveTo(i,0);
+            ctx.lineTo(i,can.height);
+
+            ctx.stroke();
+        }
+
+        for(var i = 0;i <= can.height; i+=10){//横线
+            ctx.beginPath();
+            ctx.moveTo(0,i);
+            ctx.lineTo(can.width,i);
+
+            ctx.stroke();
+        }
+        ctx.restore()
+    }
+
+
+    function drawCircle(){
+        ctx.beginPath();
+        ctx.arc(300,190,150,0,Math.PI * 2,false);
+        ctx.arc(300,190,100,0,Math.PI * 2,true);
+        ctx.fill();
+        ctx.shadowColor = undefined;
+        ctx.shadowOffsetX = (0);
+        ctx.shadowOffsetY = (0);
+
+        ctx.stroke();
+        ctx.closePath();
+    }
+    function draw(){
+        ctx.clearRect(0,0,can.width,can.height);
+        drawGrid();
+        ctx.save();
+        ctx.shadowColor = 'rgba(0,0,0,0.8)';
+        ctx.shadowOffsetX = 12;
+        ctx.shadowOffsetY = 12;
+        ctx.shadowBlur = 15;
+
+        drawCircle();
+
+        ctx.restore();
+    }
+
+
+    // Initialization................................................
+
+    ctx.fillStyle = 'rgba(100, 140, 230, 0.5)';
+    ctx.strokeStyle = ctx.fillStyle;//'rgba(20, 60, 150, 0.5)';
+
+    draw();
+</script>
+</body>
+</html>
