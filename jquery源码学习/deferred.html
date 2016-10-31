@@ -2,9 +2,20 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title></title>
+    <title>延迟对象练习</title>
 </head>
+<script type="text/javascript" src="jquery/jquery-3.1.1.js"></script>
 <body>
-
+<script>
+    var dfd = $.Deferred();
+    setTimeout(function(){
+        alert(1);
+        dfd.resolve();
+    },1000);
+    dfd.done(function(){
+        
+        alert(2);
+    });
+</script>
 </body>
 </html>
