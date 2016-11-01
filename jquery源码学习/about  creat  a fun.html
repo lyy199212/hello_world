@@ -2,9 +2,68 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title></title>
+    <title>用jQuery方法构造函数</title>
+    <script type="text/javascript" src="jquery/jquery-3.1.1.js"></script>
 </head>
 <body>
+<script>
+    /*
+    之前构造函数的方法
+    */
 
+    function Aaa (){
+
+    };
+
+
+    Aaa.prototype.init = function (){
+
+    };
+
+    Aaa.prototype.otherFun = function (){
+
+    };
+
+//or
+
+    Aaa.prototype = {
+        creatFun:function(){
+
+        },
+        init:function(){
+
+        }
+    }
+
+    var  a1 = new Aaa();
+    a1.init();
+
+
+    /*
+    * jQuery的方法
+    */
+
+    function MyFun (){
+        return new MyFun.prototype.init()
+    }
+
+    MyFun.prototype.init = function(){
+
+    };
+
+    MyFun.prototype.getName = function(){
+
+    };
+    /*
+    *构造函数的原型是个对象，另一个也是对象，一个对象赋给另外一个对象，构成一个引用关系。
+    * 这样对前面的修改和对后面的修改就是一样的了
+    */
+    MyFun.prototype.init.prototype = MyFun.prototype;
+
+    MyFun().getName();
+
+
+
+</script>
 </body>
 </html>
